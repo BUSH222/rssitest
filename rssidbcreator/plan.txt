@@ -1,0 +1,3 @@
+#menu
+#create new location preset
+#edit location preset
