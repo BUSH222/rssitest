@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, redirect
 import json, os
 app = Flask(__name__)
 
@@ -15,34 +15,32 @@ def testdata():
     with open('savedposs.txt', 'a') as funfile:
         print(json.dumps(fundata), file=funfile)
     return 'received'
-
-@app.route('/receive', methods=['GET'])
-def receive():
-    with open('savedposs.txt', 'r') as funfile:
-        return funfile.read()
     
 @app.route('/downloadapk')
-def downloadFile ():
-    path = os.getcwd() + "/Audioloc.apk"
-    return send_file(path, as_attachment=True)
+def downloadFile():
+    return redirect("https://github.com/BUSH222/Audioloc/releases/tag/v0.1", code=302)
 
 @app.route('/analyse', methods=['POST']) #10.0.2.2:22222
 def analyse():
     global fundata
+
+    res_out = {}
     with open('savedposs.txt', 'r') as funfile2:
         for s in funfile2.readlines():
             if len(s) != 0:
                 a = json.loads(s.strip())
+                assert 'NUM' in a.keys()
+                assert 'FNAME' in a.keys()
                 number = a['NUM']
+                filename = a['FNAME']
+                res_out[number] = filename
+                a.pop('FNAME')
                 a.pop('NUM')
                 fundata[number] = a
+    
     comp_to = json.loads(request.data)
 
-    res_out = {"1":"venera.mp3", "2":"monalisa.mp3"}
-
-    print(comp_to)
-
-    probs = dict(zip(fundata, len(fundata)*[0]))
+    probs = dict(zip(fundata, len(fundata)*[0])) #magic, no clue how any of this works
     for num, d in fundata.items():
         for b, r in d.items():
             if b in comp_to.keys():
@@ -50,7 +48,6 @@ def analyse():
                 if er < 10:
                     probs[num] += 100/len(d)*(1-er/10)
     maxv = sorted(probs.items(), key=lambda x: x[1], reverse=True)[0]
-    print(probs)
 
     return res_out[maxv[0]]
 
