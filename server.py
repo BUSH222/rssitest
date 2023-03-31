@@ -3,10 +3,27 @@ import json, os
 app = Flask(__name__)
 
 fundata = {}
-def merge_two_dicts(x, y):
-    z = x.copy()
-    z.update(y)
-    return z
+
+def checksavedposs(threshold=-80):
+    orfile = open('savedposs.txt', 'r').readlines()
+    tempc = []
+    for i, s in enumerate(orfile):
+        g = json.loads(s)
+        tempc.append(dict())
+        for key, value in g.items():
+            if key in ['NUM', 'FNAME']:
+                tempc[i][key] = value
+            elif int(value) > threshold:
+                tempc[i][key] = value
+    print(tempc)
+    tempc = list(filter(lambda x: len(x) > 2, tempc))
+
+    with open('savedposs.txt', 'w') as file1:
+        for k in tempc:
+            print(json.dumps(k), file=file1)
+
+
+
 
 @app.route('/testdata', methods=['GET', 'POST'])
 def testdata():
@@ -59,4 +76,6 @@ def index():
 
 
 if __name__ == "__main__":
+    checksavedposs()
+    print('Check complete')
     app.run(host='0.0.0.0', port=22222)
