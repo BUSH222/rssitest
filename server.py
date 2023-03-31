@@ -1,8 +1,7 @@
 from flask import Flask, request, redirect
-import json, os
+import json
 app = Flask(__name__)
 
-fundata = {}
 
 def checksavedposs(threshold=-80):
     orfile = open('savedposs.txt', 'r').readlines()
@@ -22,12 +21,8 @@ def checksavedposs(threshold=-80):
         for k in tempc:
             print(json.dumps(k), file=file1)
 
-
-
-
 @app.route('/testdata', methods=['GET', 'POST'])
 def testdata():
-    global fundata
     fundata = json.loads(request.data)
     with open('savedposs.txt', 'a') as funfile:
         print(json.dumps(fundata), file=funfile)
@@ -39,7 +34,7 @@ def downloadFile():
 
 @app.route('/analyse', methods=['POST']) #10.0.2.2:22222
 def analyse():
-    global fundata
+    fundata = {}
 
     res_out = {}
     with open('savedposs.txt', 'r') as funfile2:
@@ -67,8 +62,6 @@ def analyse():
     maxv = sorted(probs.items(), key=lambda x: x[1], reverse=True)[0]
 
     return res_out[maxv[0]]
-
-
 
 @app.route('/')
 def index():
