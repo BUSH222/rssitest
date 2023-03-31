@@ -37,6 +37,10 @@ def testdata():
 def downloadFile():
     return redirect("https://github.com/BUSH222/Audioloc/releases/tag/v0.1", code=302)
 
+@app.route('/mobileinfo')
+def mobileinfo():
+    return open('instructions.html').read()
+
 @app.route('/analyse', methods=['POST']) #10.0.2.2:22222
 def analyse():
     global fundata
