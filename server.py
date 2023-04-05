@@ -72,9 +72,8 @@ def analyse():
 
     return res_out[maxv[0]]
 
-@app.route('/getaudio')
-def get_audio():
-    fname = request.form.get('file_name')
+@app.route('/getaudio/<fname>', methods=['GET'])
+def get_audio(fname):
     audio_folder = 'audiofiles'
     if fname and os.path.exists(os.path.join(audio_folder, fname)):
         return send_from_directory(audio_folder, fname)
