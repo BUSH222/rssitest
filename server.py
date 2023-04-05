@@ -32,7 +32,7 @@ def testdata():
 
 @app.route('/downloadapk')
 def downloadFile():
-    return redirect("https://github.com/BUSH222/Audioloc/releases/tag/v0.1", code=302)
+    return redirect("https://github.com/BUSH222/Audioloc/releases/latest", code=302)
 
 
 @app.route('/mobileinfo')
