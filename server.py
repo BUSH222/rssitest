@@ -80,11 +80,9 @@ def get_audio(fname):
     else:
         return send_from_directory(audio_folder, 'nothing.mp3')
 
-
-
 @app.route('/')
 def index():
-    return "<html><body><h1>Welcome. Website is running.</h1></body></html>"
+    return open('homepage.html').read()
 
 
 if __name__ == "__main__":
