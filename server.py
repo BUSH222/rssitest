@@ -1,5 +1,6 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, send_from_directory
 import json
+import os
 app = Flask(__name__)
 
 
@@ -70,6 +71,16 @@ def analyse():
     maxv = sorted(probs.items(), key=lambda x: x[1], reverse=True)[0]
 
     return res_out[maxv[0]]
+
+@app.route('/getaudio')
+def get_audio():
+    fname = request.form.get('file_name')
+    audio_folder = 'audiofiles'
+    if fname and os.path.exists(os.path.join(audio_folder, fname)):
+        return send_from_directory(audio_folder, fname)
+    else:
+        return send_from_directory(audio_folder, 'nothing.mp3')
+
 
 
 @app.route('/')
