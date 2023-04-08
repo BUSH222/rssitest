@@ -27,7 +27,7 @@ def check_saved_poss(threshold=-80):
 def test_data():
     data = json.loads(request.data)
     todump = json.load(open('savedposs.json')).append(data)
-    with open('savedposs.txt', 'w') as f:
+    with open('savedposs.json', 'w') as f:
         json.dump(todump, f, ensure_ascii=False, indent=4)
     return 'received'
 
@@ -47,7 +47,7 @@ def analyse():
     data = {}
 
     res_out = {}
-    with open('savedposs.txt', 'r') as f:
+    with open('savedposs.json') as f:
         poss = json.load(f)
         for s in poss:
             if len(s) != 0:
