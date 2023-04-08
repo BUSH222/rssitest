@@ -1,0 +1,7 @@
+{   
+    "savedposs_clear_limit": -80,
+    "allowed_error_in_algorithm": 10,
+    "default_nothing": "nothing.mp3",
+    "apk_release_link": "https://github.com/BUSH222/Audioloc/releases/latest",
+    "test_port": 22222
+}

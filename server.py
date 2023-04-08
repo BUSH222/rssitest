@@ -4,6 +4,7 @@ import os
 app = Flask(__name__)
 
 
+
 def check_saved_poss(threshold=-80):
     orfile = json.load(open('savedposs.json'))
     tempc = []
@@ -34,7 +35,7 @@ def test_data():
 
 @app.route('/downloadapk')
 def download_file():
-    return redirect("https://github.com/BUSH222/Audioloc/releases/latest", code=302)
+    return redirect(apk_release_link, code=302)
 
 
 @app.route('/mobileinfo')
@@ -49,9 +50,8 @@ def analyse():
     res_out = {}
     with open('savedposs.json') as f:
         poss = json.load(f)
-        for s in poss:
-            if len(s) != 0:
-                a = json.loads(s.strip())
+        for a in poss:
+            if len(a) != 0:
                 assert 'NUM' in a.keys()
                 assert 'FNAME' in a.keys()
                 number = a['NUM']
@@ -69,8 +69,8 @@ def analyse():
         for b, r in d.items():
             if b in comp_to.keys():
                 er = abs(abs(int(r))-abs(int(comp_to[b])))
-                if er < 10:
-                    probs[num] += 100/len(d)*(1-er/10)
+                if er < allowed_error_in_algorithm:
+                    probs[num] += 100/len(d)*(1-er/allowed_error_in_algorithm)
     maxv = sorted(probs.items(), key=lambda x: x[1], reverse=True)[0]
 
     return res_out[maxv[0]]
@@ -81,7 +81,7 @@ def get_audio(fname):
     if fname and os.path.exists(os.path.join(audio_folder, fname)):
         return send_from_directory(audio_folder, fname)
     else:
-        return send_from_directory(audio_folder, 'nothing.mp3')
+        return send_from_directory(audio_folder, default_nothing)
 
 @app.route('/')
 def index():
@@ -89,5 +89,18 @@ def index():
 
 
 if __name__ == "__main__":
-    check_saved_poss()
-    app.run(host='0.0.0.0', port=22222)
+    parameters = json.load(open('parameters.json'))
+
+    savedposs_clear_limit = parameters["savedposs_clear_limit"]  
+    #any rssi values below that number are cleared for being too inaccurate, default is -80
+    allowed_error_in_algorithm = parameters["allowed_error_in_algorithm"]
+    #error margin for the detection algorithm, default is 10
+    default_nothing = parameters["default_nothing"]
+    #default mp3 file of norhing
+    apk_release_link = parameters["apk_release_link"]
+    #release link to the apk
+    test_port = parameters["test_port"]
+    #port thie app is hosted on for testing purposes, default is 22222
+    
+    check_saved_poss(threshold=savedposs_clear_limit)
+    app.run(host='0.0.0.0', port=test_port)
