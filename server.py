@@ -27,7 +27,8 @@ def check_saved_poss(threshold=-80):
 @app.route('/testdata', methods=['GET', 'POST'])
 def test_data():
     data = json.loads(request.data)
-    todump = json.load(open('savedposs.json')).append(data)
+    todump = json.load(open('savedposs.json'))
+    todump.append(data)
     with open('savedposs.json', 'w') as f:
         json.dump(todump, f, ensure_ascii=False, indent=4)
     return 'received'
